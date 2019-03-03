@@ -1,5 +1,6 @@
 --cpu Cortex-M3
 "uarttest\startup_stm32l152xe.o"
+"uarttest\uart.o"
 "uarttest\main.o"
 "uarttest\freertos.o"
 "uarttest\stm32l1xx_it.o"

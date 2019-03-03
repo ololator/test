@@ -41,4 +41,4 @@ uarttest\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 uarttest\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 uarttest\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 uarttest\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-uarttest\main.o: C:\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+uarttest\main.o: ../Inc/uart.h

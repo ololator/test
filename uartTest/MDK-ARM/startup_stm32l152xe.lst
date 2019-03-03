@@ -560,11 +560,11 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=uarttest\startup_stm32l152xe.d -ouarttest\startup_stm32l152xe.o -I
-..\\Inc -IC:\Users\Sawko\Documents\proectGruzz\uartTest\MDK-ARM\RTE\_uartTest -
-IC:\Keil\ARM\PACK\ARM\CMSIS\5.0.0\CMSIS\Include -IC:\Keil\ARM\PACK\Keil\STM32L1
-xx_DFP\1.2.0\Device\Include --predefine="__MICROLIB SETA 1" --predefine="__UVIS
-ION_VERSION SETA 522" --predefine="_RTE_ SETA 1" --predefine="STM32L152xE SETA 
-1" --list=startup_stm32l152xe.lst startup_stm32l152xe.s
+..\\Inc -IC:\Users\Sawko\Documents\Gruzzz\uartTest\MDK-ARM\RTE\_uartTest -IC:\K
+eil\ARM\PACK\ARM\CMSIS\5.0.0\CMSIS\Include -IC:\Keil\ARM\PACK\Keil\STM32L1xx_DF
+P\1.2.0\Device\Include --predefine="__MICROLIB SETA 1" --predefine="__UVISION_V
+ERSION SETA 522" --predefine="_RTE_ SETA 1" --predefine="STM32L152xE SETA 1" --
+list=startup_stm32l152xe.lst startup_stm32l152xe.s
 
 
 

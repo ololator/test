@@ -21,12 +21,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "FreeRTOS.h"
-#include <stdbool.h>
-#include "task.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,10 +43,12 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart3;
 
 osThreadId defaultTaskHandle;
-osThreadId uartTaskHandle;
+//osSemaphoreId uartBinarySemHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -57,9 +57,10 @@ osThreadId uartTaskHandle;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_USART3_UART_Init(void);
 void StartDefaultTask(void const * argument);
-void fnxUartTask(void const * argument);
-//UBaseType_t uxTaskGetStackHighWaterMark( TaskHandle_t xTask );
+
 /* USER CODE BEGIN PFP */
 void Debug_print(char* text){
 	HAL_UART_Transmit(&huart2,(uint8_t* )text, sizeof(text),10);
@@ -68,9 +69,9 @@ void Debug_print(char* text){
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-	char mess[]="Hello\r\n";
+	char mess[]="AT\r\n";
 	uint8_t txBuff[] = {0,1,2,3,4,5,6,7,8,9};
-	uint8_t rxBuff[10];
+
 /* USER CODE END 0 */
 
 /**
@@ -102,16 +103,23 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-	HAL_UART_Receive_IT(&huart2,rxBuff, 10);
+	//HAL_UART_Receive_IT(&huart2,rxBuff, 10);
 	//HAL_UART_Receive_IT(&huart2,rxBuff, 10);
 	//HAL_UART_Transmit_IT(&huart2,(uint8_t*)mess,sizeof(mess));
-	Debug_print("jjjjjj\r\n");
+	
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
+
+  /* Create the semaphores(s) */
+  /* definition and creation of uartBinarySem */
+  //osSemaphoreDef(uartBinarySem);
+  //uartBinarySemHandle = osSemaphoreCreate(osSemaphore(uartBinarySem), 1);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -130,12 +138,9 @@ int main(void)
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* definition and creation of uartTask */
-  osThreadDef(uartTask, fnxUartTask, osPriorityHigh, 0, 128);
-  uartTaskHandle = osThreadCreate(osThread(uartTask), NULL);
-
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+	InitUartTask();
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -148,9 +153,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		//UBaseType_t uxHighWaterMark;
 
-		//uxHighWaterMark = uxTaskGetNumberOfTasks();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -197,6 +200,39 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -226,6 +262,39 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
 
 }
 
@@ -279,20 +348,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
   * @retval None
   */
 
-bool flag = true;
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
-{
-  /* Set transmission flag: trasfer complete*/
-	HAL_UART_Transmit(&huart2,rxBuff, 10,10);
-	if (flag){
-		flag = false;
-	} else{
-		flag = true;
-	}
- //__NOP();
-  
-  
-}
+
+
 
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask,signed char *pcTaskName ){
@@ -310,56 +367,21 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask,signed char *pcTaskName )
 void StartDefaultTask(void const * argument)
 {
 
-    /* Inspect the high water mark of the calling task when the task starts to execute. */
-		//UBaseType_t uxHighWaterMark;
-    //uxHighWaterMark = uxTaskGetStackHighWaterMark( defaultTaskHandle );
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-
+		Debug_print(mess);
+		HAL_UART_Transmit(&huart1, (uint8_t* )mess, sizeof(mess), 10);
 		HAL_GPIO_TogglePin(LD2_GPIO_Port,LD2_Pin);
     //osDelay(200);
-		vTaskDelay(200);
+		vTaskDelay(500);
+				
+		
+		
 		
   }
   /* USER CODE END 5 */ 
-}
-
-/* USER CODE BEGIN Header_fnxUartTask */
-/**
-* @brief Function implementing the uartTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_fnxUartTask */
-eTaskState tt;
-void fnxUartTask(void const * argument)
-{
-  /* USER CODE BEGIN fnxUartTask */
-  /* Infinite loop */
-  for(;;)
-  {
-		
-		
-		HAL_UART_Receive_IT(&huart2,rxBuff, 10);
-			if (flag){
-
-			tt = eTaskGetState(defaultTaskHandle);
-			if(tt == eSuspended){
-				vTaskResume(defaultTaskHandle);
-				//flag = false;
-			}
-		} else {
-			tt = eTaskGetState(defaultTaskHandle);
-			if (tt == eReady)
-				vTaskSuspend(defaultTaskHandle);
-			//flag = true;
-		}
-	
-    osDelay(1);
-  }
-  /* USER CODE END fnxUartTask */
 }
 
 /**
